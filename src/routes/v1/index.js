@@ -15,4 +15,4 @@ router.use('/columns', columnRoutes);
 //Card Apis
 router.use('/cards', cardRoutes);
 
-export const apiV1 = { router };
+export const apiV1 = router;

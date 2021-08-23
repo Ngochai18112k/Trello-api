@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { HttpStatusCode } from '*/utilities/constants';
 
-const creatNew = async (req, res, next) => {
+const createNew = async (req, res, next) => {
     const condition = Joi.object({
         boardId: Joi.string().required(),
         columnId: Joi.string().required(),
@@ -19,4 +19,4 @@ const creatNew = async (req, res, next) => {
     }
 };
 
-export const CardValidation = { creatNew };
+export const CardValidation = { createNew };
