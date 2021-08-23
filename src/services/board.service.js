@@ -3,10 +3,34 @@ import { BoardModel } from "*/models/board.model";
 const createNew = async (data) => {
     try {
         const result = await BoardModel.createNew(data);
+
         return result;
     } catch (error) {
         throw new Error(error);
     }
 };
 
-export const BoardService = { createNew };
+const getFullBoard = async (boardId) => {
+    try {
+        const board = await BoardModel.createNew(boardId);
+
+        //add card to each column
+        board.columns.forEach(column => {
+            column.cards = board.cards.filter(c => c.columnId.toString() === column._id.toString())
+        });
+
+        //sort column by columnOrder, sort card by cardOrder, this step will apass to frontend DEV
+
+        //remove cards data from boards
+        delete boards.cards;
+
+        return board;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+export const BoardService = {
+    createNew,
+    getFullBoard
+};

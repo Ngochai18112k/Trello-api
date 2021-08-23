@@ -14,7 +14,7 @@ const creatNew = async (req, res, next) => {
         next();
     } catch (error) {
         res.status(HttpStatusCode.BAD_REQUEST).json({
-            errors: new Error(error).message
+            errors: error.message
         })
     }
 };

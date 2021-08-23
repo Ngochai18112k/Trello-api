@@ -1,11 +1,17 @@
 import { ColumnModel } from "*/models/column.model";
+import { BoardModel } from "*/models/board.model";
 
 const createNew = async (data) => {
     try {
-        const result = await ColumnModel.createNew(data);
-        return result;
+        //transaction mongodb
+        const newColumn = await ColumnModel.createNew(data);
+
+        //update columnOrder Array in boards collection
+        await BoardModel.pushColumnOrder(newColumn.boardId.toString(), newColumn._id.toString());
+
+        return newColumn;
     } catch (error) {
-        throw new Error(error);
+        //throw new Error(error);
     }
 };
 
@@ -18,7 +24,7 @@ const update = async (data) => {
         const result = await ColumnModel.update(id, data);
         return result;
     } catch (error) {
-        throw new Error(error);
+        //throw new Error(error);
     }
 };
 
