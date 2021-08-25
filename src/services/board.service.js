@@ -3,7 +3,6 @@ import { BoardModel } from "*/models/board.model";
 const createNew = async (data) => {
     try {
         const result = await BoardModel.createNew(data);
-
         return result;
     } catch (error) {
         throw new Error(error);
@@ -13,6 +12,10 @@ const createNew = async (data) => {
 const getFullBoard = async (boardId) => {
     try {
         const board = await BoardModel.createNew(boardId);
+
+        if (!board || !board.columns) {
+            throw new Error('Board not found!');
+        }
 
         //add card to each column
         board.columns.forEach(column => {
