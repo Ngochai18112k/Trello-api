@@ -52,11 +52,12 @@ const getFullBoard = async (boardId) => {
         const result = await getDB().collection(boardCollectionName).aggregate([
             {
                 $match: {
-                    _id: ObjectID(boardId)
+                    _id: ObjectID(boardId),
+                    _destroy: false
                 }
             },
             {
-                $lockup: {
+                $lookup: {
                     from: ColumnModel.columnCollectionName,
                     localField: '_id',
                     foreignFeild: 'boardId',
@@ -64,7 +65,7 @@ const getFullBoard = async (boardId) => {
                 }
             },
             {
-                $lockup: {
+                $lookup: {
                     from: CardModel.cardCollectionName,
                     localField: '_id',
                     foreignFeild: 'boardId',
