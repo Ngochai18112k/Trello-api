@@ -5,7 +5,7 @@ import { getDB } from '*/config/mongodb';
 //define column collection
 const columnCollectionName = 'columns';
 const columnCollectionSchema = Joi.object({
-    boardId: Joi.string().required(), //also ObjectId when create new
+    boardId: Joi.string().required(), //also ObjectID when create new
     title: Joi.string().required().min(3).max(20).trim(),
     cardOrder: Joi.array().items(Joi.string()).default([]),
     createdAt: Joi.date().timestamp().default(Date.now()),
@@ -23,8 +23,9 @@ const createNew = async (data) => {
         const insertValue = {
             ...validatedValue,
             boardId: ObjectID(validatedValue.boardId)
-        }
+        };
         const result = await getDB().collection(columnCollectionName).insertOne(insertValue);
+
         return result.ops[0];
     } catch (error) {
         throw new Error(error);
@@ -52,9 +53,14 @@ const pushCardOrder = async (columnId, cardId) => {
 
 const update = async (id, data) => {
     try {
+        const updateData = {
+            ...data,
+            boardId: ObjectID(data.boardId)
+        }
+
         const result = await getDB().collection(columnCollectionName).findOneAndUpdate(
             { _id: ObjectID(id) },
-            { $set: data },
+            { $set: updateData },
             { returnOriginal: false }
         );
 
