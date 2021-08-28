@@ -3,6 +3,7 @@ import { cloneDeep } from "lodash";
 
 const createNew = async (data) => {
     try {
+        //transaction mongodb
         const result = await BoardModel.createNew(data);
         return result;
     } catch (error) {
@@ -37,7 +38,25 @@ const getFullBoard = async (boardId) => {
     }
 };
 
+const update = async (id, data) => {
+    try {
+        const upadateData = {
+            ...data,
+            updatedAt: Date.now()
+        }
+        if (upadateData._id) delete upadateData._id;
+        if (upadateData.columns) delete upadateData.columns;
+
+        const updatedBoard = await BoardModel.update(id, upadateData);
+
+        return updatedBoard;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
 export const BoardService = {
     createNew,
-    getFullBoard
+    getFullBoard,
+    update
 };
