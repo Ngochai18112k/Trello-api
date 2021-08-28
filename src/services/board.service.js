@@ -13,12 +13,12 @@ const createNew = async (data) => {
 
 const getFullBoard = async (boardId) => {
     try {
-        const board = await BoardModel.createNew(boardId);
+        const board = await BoardModel.getFullBoard(boardId);
         if (!board || !board.columns) {
             throw new Error('Board not found!');
         }
 
-        const transformBoard = cloneDeep(board)
+        const transformBoard = cloneDeep(board);
         //filter deleted columns
         transformBoard.columns = transformBoard.columns.filter(column => !column._destroy);
 

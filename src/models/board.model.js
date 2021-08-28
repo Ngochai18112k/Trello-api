@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { getDB } from '*/config/mongodb';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { ColumnModel } from './column.model';
 import { CardModel } from './card.model';
 
@@ -22,7 +22,7 @@ const createNew = async (data) => {
     try {
         const value = await validateSchema(data);
         const result = await getDB().collection(boardCollectionName).insertOne(value);
-        return result.ops[0];
+        return await getDB().collection(boardCollectionName).findOne(result.insertedId);
     } catch (error) {
         throw new Error(error);
     }
@@ -33,7 +33,7 @@ const update = async (id, data) => {
         const updateData = { ...data }
 
         const result = await getDB().collection(boardCollectionName).findOneAndUpdate(
-            { _id: ObjectID(id) },
+            { _id: ObjectId(id) },
             { $set: updateData },
             { returnOriginal: false }
         );
@@ -52,7 +52,7 @@ const update = async (id, data) => {
 const pushColumnOrder = async (boardId, columnId) => {
     try {
         const result = await getDB().collection(boardCollectionName).findOneAndUpdate(
-            { _id: ObjectID(boardId) },
+            { _id: ObjectId(boardId) },
             { $push: { columnOrder: columnId } },
             { returnOriginal: false }
         );
@@ -68,7 +68,7 @@ const getFullBoard = async (boardId) => {
         const result = await getDB().collection(boardCollectionName).aggregate([
             {
                 $match: {
-                    _id: ObjectID(boardId),
+                    _id: ObjectId(boardId),
                     _destroy: false
                 }
             },
@@ -76,7 +76,7 @@ const getFullBoard = async (boardId) => {
                 $lookup: {
                     from: ColumnModel.columnCollectionName,
                     localField: '_id',
-                    foreignFeild: 'boardId',
+                    foreignField: 'boardId',
                     as: 'columns'
                 }
             },
@@ -84,7 +84,7 @@ const getFullBoard = async (boardId) => {
                 $lookup: {
                     from: CardModel.cardCollectionName,
                     localField: '_id',
-                    foreignFeild: 'boardId',
+                    foreignField: 'boardId',
                     as: 'cards'
                 }
             }

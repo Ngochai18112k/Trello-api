@@ -1,11 +1,11 @@
 import Joi from 'joi';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { getDB } from '*/config/mongodb';
 
 //define column collection
 const columnCollectionName = 'columns';
 const columnCollectionSchema = Joi.object({
-    boardId: Joi.string().required(), //also ObjectID when create new
+    boardId: Joi.string().required(), //also ObjectId when create new
     title: Joi.string().required().min(3).max(20).trim(),
     cardOrder: Joi.array().items(Joi.string()).default([]),
     createdAt: Joi.date().timestamp().default(Date.now()),
@@ -22,11 +22,11 @@ const createNew = async (data) => {
         const validatedValue = await validateSchema(data);
         const insertValue = {
             ...validatedValue,
-            boardId: ObjectID(validatedValue.boardId)
+            boardId: ObjectId(validatedValue.boardId)
         };
         const result = await getDB().collection(columnCollectionName).insertOne(insertValue);
 
-        return result.ops[0];
+        return await getDB().collection(columnCollectionName).findOne(result.insertedId);
     } catch (error) {
         throw new Error(error);
     }
@@ -40,7 +40,7 @@ const createNew = async (data) => {
 const pushCardOrder = async (columnId, cardId) => {
     try {
         const result = await getDB().collection(columnCollectionName).findOneAndUpdate(
-            { _id: ObjectID(columnId) },
+            { _id: ObjectId(columnId) },
             { $push: { cardOrder: cardId } },
             { returnOriginal: false }
         );
@@ -55,11 +55,11 @@ const update = async (id, data) => {
     try {
         const updateData = { ...data }
         if (data.boardId) {
-            updateData.boardId = ObjectID(data.boardId);
+            updateData.boardId = ObjectId(data.boardId);
         }
 
         const result = await getDB().collection(columnCollectionName).findOneAndUpdate(
-            { _id: ObjectID(id) },
+            { _id: ObjectId(id) },
             { $set: updateData },
             { returnOriginal: false }
         );
